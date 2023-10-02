@@ -1,0 +1,79 @@
+/////////////////////////////////////////////
+CONVERSION:
+	-vcodec copy = for converting mkv to mp4 (JUST USE OBS LOL)
+	-qscale 0 = conserve quality
+/////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////
+CROPPING:
+	ffmpeg -i input.mp4 -ss 00:05:20 -t 00:10:00 -c:v copy -c:a copy output1.mp4
+
+	-ss = start
+	-t = duration
+	-to = end time
+
+	-filter:v "crop=w:h:x:y"
+	-filter:v scale=1280:720
+/////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////
+SPEED
+ffmpeg -i input.mp4 -vf "setpts=0.5*PTS" output.mp4
+setpts=x decimal = faster
+u can also add "-r <fps>" to keep every frame in the video and make the fps crazy like 800fps
+/////////////////////////////////////////////
+
+
+/////////////////////////////////////////////
+ADD TEXT:
+ffmpeg -i test.mp4 -vf "drawtext=text='ENGINEER':fontfile=impact.ttf:fontsize=200:fontcolor=white:x=150:y=750", -c:a copy fonttest.mp4
+/////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////
+SUBTITLES:
+EXTRACT: ffmpeg -i file.mkv -map 0:s:0 subs.srt
+
+EMBEDD: ffmpeg -i file.mp4 -i file.srt -c copy -c:s mov_text -metadata:s:s:0 language=eng output.mp4
+	-c copy specifies that the video is not to be re-encoded
+	-c:s mov_text sets the SRT file to MOV_TEXT format.
+	-metadata:s:s:0 subtitle track = 0
+/////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////
+GET ALL FRAMES:
+ffmpeg -i input.mp4 %04d.png
+/////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////
+MP4 TO GIF:
+ffmpeg -y -i input.mp4 -vf fps=15,scale=480:-1:flags=lanczos,palettegen=128 palette.png
+ffmpeg -i input.mp4 -i palette.png -filter_complex "fps=15,scale=480:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=floyd_steinberg" output.gif
+/////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////
+how2merge videos:
+file '1.mp4'
+file '2.mp4'
+...
+
+#ffmpeg -f concat -i videos.txt -c copy output8.mp4
+/////////////////////////////////////////////
+
+
+
+/////////////////////////////////////////////
+OVERLAY VIDEO:
+ffmpeg -i mainvideo.mp4 -vf "movie=smallervideo.mp4, scale=200: -1 [inner]; [in][inner] overlay=x:y [out]" test.mp4
+/////////////////////////////////////////////
